@@ -31,7 +31,8 @@ A translator
 			{:ok, translation} ->
 				{:reply, {:ok, translation}, Dict.put(state, hash(text, to), translation)}
       error ->
-				{:reply, error, state}
+				Logger.debug("Failed to translate: #{inspect error}")
+				{:reply, {:error, "Translation failed"}, state}
     end
   end
 
@@ -48,19 +49,23 @@ A translator
     end
   end
 
+	defp google_translate(nil, _to, _key) do
+		{:error, "No text"}
+  end
   defp google_translate(text, to, key) do
 		Logger.debug("Accessing Google Translate")
 		query = "#{@url}?q=#{URI.encode(text)}&target=#{to}&key=#{key}"
     try do
-			response = HTTPotion.get(query)
+			response = HTTPotion.get(query, [timeout: 10_000])
 			# Logger.debug("Response: #{inspect response}")
 			if HTTPotion.Response.success?(response) do
 				translation_from(response.body)
 			else
-				{:error, "Failed to retrieve translation"}
+				{:error, "Translation failed"}
 			end
     catch
-			error -> {:error, "#{inspect error}"}
+			kind,reason -> Logger.debug( "Failed to translate: #{inspect kind} , #{inspect reason}")
+                     {:error, "Translation failed"}
     end
   end
 
@@ -69,7 +74,7 @@ A translator
     # Logger.debug("Decoded: #{inspect result}")
     case result["data"]["translations"] do
 			[translation|_] -> {:ok, translation["translatedText"]}
-      [] -> {:error, "no translation found"}
+      [] -> {:error, "No translation found"}
     end
   end
 
