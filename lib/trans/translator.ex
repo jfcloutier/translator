@@ -6,7 +6,7 @@ A translator
 	alias Poison, as: Json
 	
   @name __MODULE__
-  @group :translator
+  @group :translators
 
   @url "https://www.googleapis.com/language/translate/v2"
 
