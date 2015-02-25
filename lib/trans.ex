@@ -8,7 +8,7 @@ defmodule Trans do
 		Logger.debug("Trans started")
 
 		children = [
-								 worker(Trans.Translator, [])
+								 worker(Trans.Translator, []) # A genserver
 						 ]
     opts = [strategy: :one_for_one, name: Trans.Supervisor]
 		Supervisor.start_link(children, opts)
