@@ -10,7 +10,7 @@ This was developed for the Portland (Maine) Erlang & Elixir Meetup
 
 To start:
 
-1. Execute: iex --name something_unique@your_ip_address --cookie oreo
+1. Execute: iex --name something_unique@your_ip_address --cookie oreo -S mix
 2. Join the cluster: iex> Node.connect(:"name_of_hacker_news_node") 
 
 At least one translator node must be started.
