@@ -38,7 +38,7 @@ Accesses Google Translate to translate short texts.
 		result = translate(text, to, key, state)
 		case result do
 			{:ok, translation} ->
-				{:reply, {:ok, translation}, Dict.put(state, hash(text, to), translation)}
+				{:reply, {:ok, translation}, Dict.put(state, make_key(text, to), translation)}
       error ->
 				Logger.debug("Failed to translate: #{inspect error}")
 				{:reply, {:error, "Translation failed"}, state}
@@ -48,13 +48,13 @@ Accesses Google Translate to translate short texts.
   ### PRIVATE
 
   # Create key for caching a translation
-  defp hash(text, to) do
+  defp make_key(text, to) do
 		"#{to} => #{text}"
   end
 
   # First look for a cached translation then ask Google Translate
 	defp translate(text, to, key, state) do		
-		case Dict.get(state, hash(text, to)) do
+		case Dict.get(state, make_key(text, to)) do
 			nil ->
 				google_translate(text, to, key)
 		  translation ->
